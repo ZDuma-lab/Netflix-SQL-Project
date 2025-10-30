@@ -71,8 +71,12 @@ ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC
 SELECT *
 FROM netflix
 WHERE date_added IS NOT NULL
-  
-  AND TO_DATE(TRIM(date_added), 'DD-Mon-YY') >= CURRENT_DATE - INTERVAL '5 years';
+  AND LENGTH(TRIM(date_added)) > 0
+  AND CASE 
+        WHEN date_added ~ '^\d{2}-[A-Za-z]{3}-\d{2}$' 
+        THEN TO_DATE(date_added, 'DD-Mon-YY') >= CURRENT_DATE - INTERVAL '5 years'
+        ELSE FALSE
+      END;
 
 
 -- 7. Find all the movies/TV shows by director 'Rajiv Chilaka'!
@@ -193,3 +197,4 @@ ORDER BY 2
 
 
 -- End of reports
+

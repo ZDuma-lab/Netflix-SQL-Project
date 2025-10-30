@@ -127,7 +127,13 @@ ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC;
 ```sql
 SELECT *
 FROM netflix
-WHERE TO_DATE(date_added, 'Month DD, YYYY') >= CURRENT_DATE - INTERVAL '5 years';
+WHERE date_added IS NOT NULL
+  AND LENGTH(TRIM(date_added)) > 0
+  AND CASE 
+        WHEN date_added ~ '^\d{2}-[A-Za-z]{3}-\d{2}$' 
+        THEN TO_DATE(date_added, 'DD-Mon-YY') >= CURRENT_DATE - INTERVAL '5 years'
+        ELSE FALSE
+      END;
 ```
 
 **Objective:** Retrieve content added to Netflix in the last 5 years.
